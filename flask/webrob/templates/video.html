@@ -30,6 +30,10 @@
         ui.updateStartTime();
         ui.updateEndTime();
     };
+
+    function on_camera_pose_received(pose) {
+        ui.setCameraPose(pose);
+    };
     
     function resize() {
       $('#page-content').layout({
