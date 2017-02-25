@@ -48,14 +48,47 @@
     var visClient, graphClient;
     
     function on_marker_dblclick(marker) {
+        var markerId = '';
+
         var prolog = parent.client.newProlog();
-        prolog.jsonQuery("term_to_atom("+marker.ns+",MarkerName), "+
+
+        if(marker.ns.startsWith('trajectory'))
+        {
+            var ind = marker.ns.indexOf(')');
+            markerId = marker.ns.substring(0, ind + 1);
+
+            var link_of_interest = markerId.replace("trajectory(", "").replace(")", "");
+            var link =  link_of_interest.substring(1, link_of_interest.length - 1);
+
+            var time = "timepoint_" + marker.ns.substring(ind + 1, marker.ns.length).replace(link, "");
+           
+            prolog.jsonQuery("term_to_atom("+ markerId +",MarkerName), rdf_has(R, 'http://knowrob.org/kb/srdl2-comp.owl#urdfName', literal("+
+            link_of_interest + ")), task(T, '" + time + "'), rdf_has(T, knowrob:'performedBy', R), rdf_has(T, knowrob:'goalLocation', G)," +
+            "mng_lookup_position('/map'," +  link_of_interest + ", '" + time + "', Loc)," +
+            "random(Id), marker(sprite_text(Id), Sb), marker_text(Sb,G), marker_translation(Sb, Loc), marker_color(Sb, [1,0,0,1]), marker_update(Sb), " +
+            "marker_queries(MarkerName, MarkerQueries), ignore(marker_publish).",
+            function(result) {
+                prolog.finishClient();
+                ui.loadObjectQueries(result.solution.MarkerQueries);
+            }
+        );
+
+        }
+        else
+        {
+            markerId = marker.ns;
+
+            prolog.jsonQuery("term_to_atom("+ markerId +",MarkerName), "+
             "marker_queries(MarkerName, MarkerQueries).",
             function(result) {
                 prolog.finishClient();
                 ui.loadObjectQueries(result.solution.MarkerQueries);
             }
         );
+        }
+
+        
+        
     };
     
     function on_marker_delete(ns) {
