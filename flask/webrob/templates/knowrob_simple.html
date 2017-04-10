@@ -62,10 +62,10 @@
 
             var time = "timepoint_" + marker.ns.substring(ind + 1, marker.ns.length).replace(link, "");
            
-            prolog.jsonQuery("term_to_atom("+ markerId +",MarkerName), rdf_has(R, 'http://knowrob.org/kb/srdl2-comp.owl#urdfName', literal("+
-            link_of_interest + ")), task(T, '" + time + "'), rdf_has(T, knowrob:'performedBy', R), rdf_has(T, knowrob:'goalLocation', G)," +
-            "mng_lookup_position('/map'," +  link_of_interest + ", '" + time + "', Loc)," +
-            "random(Id), marker(sprite_text(Id), Sb), marker_text(Sb,G), marker_translation(Sb, Loc), marker_color(Sb, [1,0,0,1]), marker_update(Sb), " +
+            prolog.jsonQuery("term_to_atom("+ markerId +",MarkerName), rdf_has(R, 'http://knowrob.org/kb/srdl2-comp.owl#succeedingLink', Lnk), rdf_has(Lnk, 'http://knowrob.org/kb/srdl2-comp.owl#urdfName', literal("+
+            link_of_interest + ")), task(T, '" + time + "'), rdf_has(T, knowrob:'performedBy', R), rdf_has(T, knowrob:'goalLocation', G), rdf_has(G, knowrob:'translation', literal(type(_X, Goal)))," +
+            "mng_lookup_position('/map'," +  link_of_interest + ", '" + time + "', Loc), atom_concat('Goal Location: ', Goal, Text), atom_concat(' Performed by: ', R, Text1), atom_concat(Text, Text1, Text2)," +
+            "random(Id), marker(sprite_text(Id), Sb), marker_text(Sb,Text2), marker_translation(Sb, Loc), marker_color(Sb, [1,0,0,1]), marker_update(Sb), " +
             "marker_queries(MarkerName, MarkerQueries), ignore(marker_publish).",
             function(result) {
                 prolog.finishClient();

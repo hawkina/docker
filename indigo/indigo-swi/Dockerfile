@@ -19,7 +19,7 @@ RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 421C365B
                            ros-indigo-rosjava ros-indigo-rosbridge-suite ros-indigo-tf2-web-republisher \
                            ros-indigo-mjpeg-server mongodb-clients mongodb-dev libmongo-client-dev \
                            ros-indigo-rosauth mencoder lame libavcodec-extra-54 \
-                           openjdk-7-jdk texlive-latex-base imagemagick && \
+                           openjdk-7-jdk texlive-latex-base imagemagick unzip && \
     apt-get -qq -y autoremove && \
     apt-get -qq -y clean && \
     rm -rf /var/lib/apt/lists/* && \
