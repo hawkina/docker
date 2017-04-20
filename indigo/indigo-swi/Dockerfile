@@ -1,11 +1,12 @@
 FROM ubuntu:14.04
 MAINTAINER Daniel Beßler, danielb@cs.uni-bremen.de	
 
+ARG HOST_IP=172.17.0.1
 ARG ROS_SOURCES="http://packages.ros.org/ros/ubuntu"
 
 # Use apt-cacher container
 # NOTE: Requires that apt-cacher server was started before build.
-RUN echo 'Acquire::http { Proxy "http://172.17.42.1:3142"; };' >> /etc/apt/apt.conf.d/01proxy
+RUN echo 'Acquire::http { Proxy "http://'${HOST_IP}':3142"; };' >> /etc/apt/apt.conf.d/01proxy
 
 # Install ROS
 RUN apt-get -qq update && \
@@ -19,7 +20,7 @@ RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 421C365B
                            ros-indigo-rosjava ros-indigo-rosbridge-suite ros-indigo-tf2-web-republisher \
                            ros-indigo-mjpeg-server mongodb-clients mongodb-dev libmongo-client-dev \
                            ros-indigo-rosauth mencoder lame libavcodec-extra-54 \
-                           openjdk-7-jdk texlive-latex-base imagemagick unzip && \
+                           openjdk-7-jdk texlive-latex-base imagemagick && \
     apt-get -qq -y autoremove && \
     apt-get -qq -y clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -66,7 +67,7 @@ ENV LD_LIBRARY_PATH=/home/ros/devel/lib:/opt/ros/indigo/lib:/usr/lib/jvm/default
 
 # Use nexus server that mirrors maven central and ROS repository.
 # NOTE: Requires that nexus server was started before build.
-ENV ROS_MAVEN_REPOSITORY http://172.17.42.1:8081/nexus/content/groups/public
+ENV ROS_MAVEN_REPOSITORY=http://${HOST_IP}:8081/nexus/content/groups/public
 # Configure maven to use the nexus server
 RUN mkdir -p /home/ros/.m2
 ADD mvn-settings.xml /home/ros/.m2/settings.xml
